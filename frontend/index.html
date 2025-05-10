@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>FitTrack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 p-6">
+    <div class="max-w-xl mx-auto bg-white rounded-xl shadow-md p-6 space-y-6">
+        <h1 class="text-2xl font-bold">Login</h1>
+        <input type="text" id="username" placeholder="Usuário" class="w-full p-2 border rounded">
+        <input type="password" id="password" placeholder="Senha" class="w-full p-2 border rounded">
+        <button onclick="login()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Entrar</button>
+
+        <hr class="my-4">
+
+        <h2 class="text-xl font-semibold">Treinos</h2>
+        <button onclick="getWorkouts()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Carregar Treinos</button>
+        <ul id="workout-list" class="list-disc pl-6"></ul>
+
+        <h2 class="text-xl font-semibold">Novo Treino</h2>
+        <input type="text" id="new-workout-name" placeholder="Nome do treino" class="w-full p-2 border rounded">
+        <input type="date" id="new-workout-date" class="w-full p-2 border rounded">
+        <button onclick="createWorkout()" class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 mt-2">Salvar Treino</button>
+    </div>
+
+    <script>
+        let token = ''
+
+        function login() {
+            const username = document.getElementById("username").value
+            const password = document.getElementById("password").value
+
+            fetch("http://localhost:8000/api/token/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                token = data.access
+                alert("Login bem-sucedido!")
+            })
+            .catch(() => alert("Erro ao fazer login"))
+        }
+
+        function getWorkouts() {
+            fetch("http://localhost:8000/api/workouts/", {
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                const list = document.getElementById("workout-list")
+                list.innerHTML = ""
+                data.forEach(workout => {
+                    const li = document.createElement("li")
+                    li.textContent = `${workout.date} — ${workout.name}`
+                    list.appendChild(li)
+                })
+            })
+        }
+
+        function createWorkout() {
+            const name = document.getElementById("new-workout-name").value
+            const date = document.getElementById("new-workout-date").value
+
+            fetch("http://localhost:8000/api/workouts/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({ name, date })
+            })
+            .then(res => {
+                if (res.ok) {
+                    alert("Treino criado!")
+                    getWorkouts()
+                } else {
+                    alert("Erro ao criar treino.")
+                }
+            })
+        }
+    </script>
+</body>
+</html>

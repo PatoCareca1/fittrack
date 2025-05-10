@@ -1,0 +1,11 @@
+### Criar treino via GraphQL
+POST http://localhost:8000/graphql/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ2OTA3NzgxLCJpYXQiOjE3NDY5MDc0ODEsImp0aSI6Ijg1MDNkNmYyZWU0MzQxY2RiNGI4NmQ3Y2JiNTAwYzM1IiwidXNlcl9pZCI6Mn0.lgLkrDFccOjPQtF8os0O6u0-Td1RbtabJkqkUhAdz20
+
+{
+  "query": "mutation { createWorkout(name: \"Treino via .http\", date: \"2025-05-12\") { workout { id name date } } }"
+}
+
+
+

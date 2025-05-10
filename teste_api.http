@@ -1,0 +1,12 @@
+### Obter token JWT
+POST http://localhost:8000/api/token/
+Content-Type: application/json
+
+{
+  "username": "lucas",
+  "password": "080491"
+}
+
+### Listar treinos do usuário autenticado
+GET http://localhost:8000/api/workouts/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ2OTAzNzQ2LCJpYXQiOjE3NDY5MDM0NDYsImp0aSI6IjJmZDBkZmI1ZjZiZTQzOTFhMjYxMzUwYTcwNzA2OWNhIiwidXNlcl9pZCI6MX0.qF0SZlWjLP5lzRWrhwCTAch5awaLoQ2RoADbI02IdK4
