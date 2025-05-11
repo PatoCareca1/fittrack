@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from .models import Workout, Exercise, Meal, FoodItem, Progress
-from .serializers import WorkoutSerializer, ExerciseSerializer, MealSerializer, FoodItemSerializer, ProgressSerializer
+from core.models import Workout, Exercise, Meal, FoodItem, Progress
+from core.serializers import WorkoutSerializer, ExerciseSerializer, MealSerializer, FoodItemSerializer, ProgressSerializer
 from graphene_django.views import GraphQLView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils.functional import SimpleLazyObject

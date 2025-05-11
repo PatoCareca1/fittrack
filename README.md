@@ -40,9 +40,13 @@ fittrack/
 │   ├── serializers.py       # Serializers DRF
 │   ├── schema.py            # Queries e mutations GraphQL
 │   └── urls.py              # Rotas REST
+├── fittrack/               # Configurações do projeto Django
+│   ├── settings.py         # Configurações globais (JWT, CORS, apps)
+│   ├── urls.py             # Rotas REST e GraphQL
+│   ├── asgi.py / wsgi.py   # Configurações para servidores ASGI/WSGI
 ├── frontend/
-│   └── index.html           # Interface web
-├── manage.py
+│   └── index.html          # Interface web
+├── manage.py               # Entrada principal do Django
 └── README.md
 ```
 
@@ -128,7 +132,7 @@ mutation {
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/seu-usuario/fittrack.git
+git clone https://github.com/PatoCareca1/fittrack
 cd fittrack
 ```
 

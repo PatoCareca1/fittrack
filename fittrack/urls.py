@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from core.views import AuthenticatedGraphQLView
+from core.views.rest_views import AuthenticatedGraphQLView
 from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [

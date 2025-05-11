@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "name": "Treino Peito",
+    "date": "2025-05-12",
+    "exercises": [
+      "Supino Reto",
+      "Supino Inclinado com Halteres",
+      "Crucifixo",
+      "Crossover"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Treino Pernas",
+    "date": "2025-05-13",
+    "exercises": [
+      "Agachamento Livre",
+      "Leg Press",
+      "Cadeira Extensora",
+      "Cadeira Flexora",
+      "Panturrilha Sentado"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Treino Ombro",
+    "date": "2025-05-14",
+    "exercises": [
+      "Desenvolvimento com Halteres",
+      "Elevação Lateral",
+      "Elevação Frontal",
+      "Remada Alta"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Treino Braços (Bíceps e Tríceps)",
+    "date": "2025-05-15",
+    "exercises": [
+      "Rosca Direta",
+      "Rosca Martelo",
+      "Tríceps Pulley",
+      "Tríceps Testa"
+    ]
+  }
+]
