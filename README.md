@@ -3,20 +3,17 @@
 
 Sistema Web para gerenciamento de treino, dieta e progresso físico, desenvolvido com Django e Django REST Framework, com suporte adicional a GraphQL e autenticação via JWT. O objetivo é oferecer uma interface simples e funcional para praticantes de musculação acompanharem sua rotina de forma eficiente.
 
----
+ O projeto foi desenvolvido para as atividades AT1, AT2 e AT3 da disciplina de **Desenvolvimento Web (2ª Unidade)**.
 
 ## 📚 Descrição Geral
 
 O FitTrack permite:
-
-- Cadastrar treinos e exercícios
-- Registrar refeições com dados nutricionais
-- Acompanhar a evolução corporal (peso, medidas)
-- Usar tanto API REST quanto API GraphQL
+- Cadastrar treinos, exercícios e refeições
+- Acompanhar evolução corporal (progresso físico)
+- Persistir dados em banco relacional (SQLite) e arquivo JSON (workouts.json)
+- Usar API REST e GraphQL (Queries e Mutations)
 - Proteger rotas com autenticação JWT
-- Interagir com a API via front-end HTML + JS puro
-
----
+- Gerenciar dados via front-end (HTML + JS puro + Tailwind CSS)
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -24,29 +21,34 @@ O FitTrack permite:
 - Django 5.2.1
 - Django REST Framework
 - Graphene-Django (GraphQL)
-- SimpleJWT (autenticação)
-- Tailwind CSS (via CDN)
-- HTML + JavaScript (fetch)
+- SimpleJWT (autenticação JWT)
+- SQLite (banco relacional)
+- Tailwind CSS (CDN)
+- HTML + JavaScript puro (fetch API)
 
----
 
 ## 📁 Estrutura do Projeto
 
 ```
 fittrack/
 ├── core/
-│   ├── models.py            # Models principais
-│   ├── views.py             # ViewSets da API REST
+│   ├── models.py            # Models (Workout, Exercise, Meal, Progress, etc.)
 │   ├── serializers.py       # Serializers DRF
-│   ├── schema.py            # Queries e mutations GraphQL
-│   └── urls.py              # Rotas REST
-├── fittrack/               # Configurações do projeto Django
-│   ├── settings.py         # Configurações globais (JWT, CORS, apps)
-│   ├── urls.py             # Rotas REST e GraphQL
-│   ├── asgi.py / wsgi.py   # Configurações para servidores ASGI/WSGI
+│   ├── views/
+│   │   ├── rest_views.py    # ViewSets da API REST (banco relacional)
+│   │   └── json_views.py    # CRUD com persistência em arquivo JSON
+│   ├── schema.py            # Queries e Mutations do GraphQL
+│   └── urls.py              # Rotas REST e JSON
+├── data/
+│   └── workouts.json        # Persistência local (JSON)
+├── fittrack/
+│   ├── settings.py          # Configurações globais (JWT, CORS, apps)
+│   ├── urls.py              # Inclusão de rotas REST e GraphQL
+│   └── asgi.py / wsgi.py    # Servidores ASGI/WSGI
 ├── frontend/
-│   └── index.html          # Interface web
-├── manage.py               # Entrada principal do Django
+│   └── index.html           # Interface web (CRUD completo)
+├── manage.py                # Entrada principal Django
+├── requirements.txt         # Dependências do projeto
 └── README.md
 ```
 
@@ -87,18 +89,28 @@ Authorization: Bearer SEU_TOKEN
 - `PUT /api/workouts/{id}/` — editar
 - `DELETE /api/workouts/{id}/` — remover
 
-(semelhante para `/meals/`, `/progress/`, etc.)
+## Para JSON
 
----
+- GET /api/json/workouts/
+- POST /api/json/workouts/
+- PUT /api/json/workouts/{id}/
+- DELETE /api/json/workouts/{id}/
 
 ## 🔎 GraphQL
 
-### URL:
+### Endpoint:
 ```
 http://localhost:8000/graphql/
 ```
+### Importante:
 
-### Exemplo de query:
+Header de autenticação:
+´´´
+{
+  "Authorization": "Bearer SEU_TOKEN"
+}
+´´´
+### Query de listagem:
 
 ```graphql
 query {
@@ -110,7 +122,7 @@ query {
 }
 ```
 
-### Exemplo de mutation:
+### Mutation de criação:
 
 ```graphql
 mutation {
@@ -126,7 +138,11 @@ mutation {
 
 > Autenticação por JWT também é exigida no GraphQL.
 
----
+### Mutation de exclusão:
+
+mutation {
+  deleteWorkout(id: 1) { ok }
+}
 
 ## 🧪 Como rodar localmente
 
@@ -164,20 +180,15 @@ python manage.py runserver
 - GraphQL: `http://localhost:8000/graphql/`
 - Front-end: abra `frontend/index.html` no navegador
 
----
+## ✅ O que foi entregue:
 
-## 👨‍🏫 Observações Finais
-
-- Projeto desenvolvido para a disciplina de Desenvolvimento Web (AT1)
-- Integra REST e GraphQL em um único backend Django
-- Autenticação segura via JWT
-- Front-end leve e funcional com Tailwind
-- Cumpre todos os critérios da AT1 com +2 pontos extras por GraphQL
-
----
+| ATIVIDADE | FUNCIONALIDADES INCLUÍDAS                                      |
+|-----------|---------------------------------------------------------------|
+| **AT1**   | API REST completa + Front-end funcional + JWT + GraphQL extra |
+| **AT2**   | CRUD completo com persistência em arquivo JSON (via API e Front) |
+| **AT3**   | Banco relacional (SQLite) + segurança JWT + GraphQL integrado |
 
 ## 📽️ Vídeo de Apresentação
 
-> [INSIRA AQUI O LINK PARA O YOUTUBE]
+> https://youtu.be/ZbWQWiZfR9I
 
----

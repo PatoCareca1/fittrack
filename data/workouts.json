@@ -28,20 +28,20 @@
     "date": "2025-05-14",
     "exercises": [
       "Desenvolvimento com Halteres",
-      "Elevação Lateral",
-      "Elevação Frontal",
+      "Eleva\u00e7\u00e3o Lateral",
+      "Eleva\u00e7\u00e3o Frontal",
       "Remada Alta"
     ]
   },
   {
     "id": 4,
-    "name": "Treino Braços (Bíceps e Tríceps)",
+    "name": "Treino Bra\u00e7os (B\u00edceps e Tr\u00edceps)",
     "date": "2025-05-15",
     "exercises": [
       "Rosca Direta",
       "Rosca Martelo",
-      "Tríceps Pulley",
-      "Tríceps Testa"
+      "Tr\u00edceps Pulley",
+      "Tr\u00edceps Testa"
     ]
   }
 ]

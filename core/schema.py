@@ -29,7 +29,6 @@ class CreateWorkout(graphene.Mutation):
     def mutate(self, info, name, date):
         print("Token recebido:", info.context.META.get("HTTP_AUTHORIZATION"))
         print("Usuário autenticado:", info.context.user)
-
         user = info.context.user
         if not user.is_authenticated:
             if not user.is_authenticated:
@@ -37,9 +36,26 @@ class CreateWorkout(graphene.Mutation):
         workout = Workout.objects.create(user=user, name=name, date=date)
         return CreateWorkout(workout=workout)
 
+class DeleteWorkout(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID(required=True)
+
+    ok = graphene.Boolean()
+
+    def mutate(self, info, id):
+        user = info.context.user
+        if not user.is_authenticated:
+            raise Exception("Authentication required")
+
+        try:
+            workout = Workout.objects.get(id=id, user=user)
+            workout.delete()
+            return DeleteWorkout(ok=True)
+        except Workout.DoesNotExist:
+            return DeleteWorkout(ok=False)
 
 class Mutation(graphene.ObjectType):
     create_workout = CreateWorkout.Field()
-
+    delete_workout = DeleteWorkout.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

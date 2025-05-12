@@ -1,90 +1,300 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>FitTrack</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <title>FitTrack</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-800 p-6">
-    <div class="max-w-xl mx-auto bg-white rounded-xl shadow-md p-6 space-y-6">
-        <h1 class="text-2xl font-bold">Login</h1>
-        <input type="text" id="username" placeholder="Usuário" class="w-full p-2 border rounded">
-        <input type="password" id="password" placeholder="Senha" class="w-full p-2 border rounded">
-        <button onclick="login()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Entrar</button>
-
-        <hr class="my-4">
-
-        <h2 class="text-xl font-semibold">Treinos</h2>
-        <button onclick="getWorkouts()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Carregar Treinos</button>
-        <ul id="workout-list" class="list-disc pl-6"></ul>
-
-        <h2 class="text-xl font-semibold">Novo Treino</h2>
-        <input type="text" id="new-workout-name" placeholder="Nome do treino" class="w-full p-2 border rounded">
-        <input type="date" id="new-workout-date" class="w-full p-2 border rounded">
-        <button onclick="createWorkout()" class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 mt-2">Salvar Treino</button>
+  <div class="max-w-xl mx-auto bg-white rounded-xl shadow-md p-6 space-y-6">
+    <div id="auth-section">
+      <h1 class="text-2xl font-bold">Login</h1>
+      <input type="text" id="username" placeholder="Usuário" class="w-full p-2 border rounded">
+      <input type="password" id="password" placeholder="Senha" class="w-full p-2 border rounded">
+      <button onclick="login()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Entrar</button>
     </div>
 
-    <script>
-        let token = ''
+    <div id="welcome-section" class="hidden">
+      <h1 class="text-2xl font-bold">Bem-vindo, <span id="user-display"></span></h1>
+      <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Sair</button>
+    </div>
 
-        function login() {
-            const username = document.getElementById("username").value
-            const password = document.getElementById("password").value
+    <hr class="my-4">
 
-            fetch("http://localhost:8000/api/token/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ username, password })
-            })
-            .then(res => res.json())
-            .then(data => {
-                token = data.access
-                alert("Login bem-sucedido!")
-            })
-            .catch(() => alert("Erro ao fazer login"))
+    <h2 class="text-xl font-semibold">Treinos (Banco de Dados)</h2>
+    <button onclick="getWorkouts()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Carregar Treinos REST</button>
+    <ul id="workout-list" class="list-disc pl-6"></ul>
+
+    <h2 class="text-xl font-semibold">Novo Treino (Banco de Dados)</h2>
+    <input type="text" id="new-workout-name" placeholder="Nome do treino" class="w-full p-2 border rounded">
+    <input type="date" id="new-workout-date" class="w-full p-2 border rounded">
+    <button onclick="createWorkout()" class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 mt-2">Salvar Treino</button>
+
+    <hr class="my-4">
+
+    <h2 class="text-xl font-semibold">Treinos (Arquivo JSON)</h2>
+    <button onclick="getJsonWorkouts()" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Carregar Treinos JSON</button>
+    <ul id="json-workout-list" class="list-disc pl-6"></ul>
+
+    <h2 class="text-xl font-semibold">Novo Treino (Arquivo JSON)</h2>
+    <input type="text" id="new-json-workout-name" placeholder="Nome do treino" class="w-full p-2 border rounded">
+    <input type="date" id="new-json-workout-date" class="w-full p-2 border rounded">
+    <button onclick="createJsonWorkout()" class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 mt-2">Salvar Treino JSON</button>
+
+  </div>
+
+  <script>
+    let token = localStorage.getItem("jwt") || '';
+    let currentUser = localStorage.getItem("username") || '';
+
+    function updateAuthDisplay() {
+      const authSection = document.getElementById("auth-section");
+      const welcomeSection = document.getElementById("welcome-section");
+      const userDisplay = document.getElementById("user-display");
+
+      if (token) {
+        authSection.classList.add("hidden");
+        welcomeSection.classList.remove("hidden");
+        userDisplay.textContent = currentUser;
+      } else {
+        authSection.classList.remove("hidden");
+        welcomeSection.classList.add("hidden");
+      }
+    }
+
+    function login() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      fetch("http://localhost:8000/api/token/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.access) {
+          token = data.access;
+          currentUser = username;
+          localStorage.setItem("jwt", token);
+          localStorage.setItem("username", currentUser);
+          alert("Login bem-sucedido!");
+          updateAuthDisplay();
+        } else {
+          alert("Erro ao fazer login.");
         }
+      })
+      .catch(() => alert("Erro ao fazer login."));
+    }
 
-        function getWorkouts() {
-            fetch("http://localhost:8000/api/workouts/", {
-                headers: {
-                    "Authorization": "Bearer " + token
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                const list = document.getElementById("workout-list")
-                list.innerHTML = ""
-                data.forEach(workout => {
-                    const li = document.createElement("li")
-                    li.textContent = `${workout.date} — ${workout.name}`
-                    list.appendChild(li)
-                })
-            })
+    function logout() {
+      localStorage.removeItem("jwt");
+      localStorage.removeItem("username");
+      token = '';
+      currentUser = '';
+      alert("Logout efetuado!");
+      updateAuthDisplay();
+    }
+
+    function getWorkouts() {
+      fetch("http://localhost:8000/api/workouts/", {
+        headers: { "Authorization": "Bearer " + token }
+      })
+      .then(res => res.json())
+      .then(data => {
+        const list = document.getElementById("workout-list");
+        list.innerHTML = "";
+
+        data.forEach(workout => {
+          const li = document.createElement("li");
+          li.classList.add("mb-2");
+
+          const text = document.createElement("span");
+          text.textContent = `${workout.date} — ${workout.name}`;
+          li.appendChild(text);
+
+          const editBtn = document.createElement("button");
+          editBtn.textContent = "Editar";
+          editBtn.className = "ml-2 px-2 py-1 bg-blue-400 text-white rounded";
+          editBtn.onclick = () => editWorkout(workout);
+          li.appendChild(editBtn);
+
+          const deleteBtn = document.createElement("button");
+          deleteBtn.textContent = "Excluir";
+          deleteBtn.className = "ml-2 px-2 py-1 bg-red-500 text-white rounded";
+          deleteBtn.onclick = () => deleteWorkout(workout.id);
+          li.appendChild(deleteBtn);
+
+          list.appendChild(li);
+        });
+      });
+    }
+
+    async function createWorkout() {
+      const name = document.getElementById("new-workout-name").value.trim();
+      const date = document.getElementById("new-workout-date").value;
+
+      if (!token) return alert("Faça login primeiro.");
+      if (!name || !date) return alert("Preencha todos os campos.");
+
+      const response = await fetch("http://localhost:8000/api/workouts/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ name, date })
+      });
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        alert("Treino criado com sucesso!");
+        getWorkouts();
+      } else {
+        let msg = "Erro ao criar treino:\n";
+        for (const field in responseData) {
+          msg += `- ${field}: ${responseData[field].join(', ')}\n`;
         }
+        alert(msg);
+      }
+    }
 
-        function createWorkout() {
-            const name = document.getElementById("new-workout-name").value
-            const date = document.getElementById("new-workout-date").value
+    async function editWorkout(workout) {
+      const newName = prompt("Novo nome do treino:", workout.name);
+      const newDate = prompt("Nova data (AAAA-MM-DD):", workout.date);
 
-            fetch("http://localhost:8000/api/workouts/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + token
-                },
-                body: JSON.stringify({ name, date })
-            })
-            .then(res => {
-                if (res.ok) {
-                    alert("Treino criado!")
-                    getWorkouts()
-                } else {
-                    alert("Erro ao criar treino.")
-                }
-            })
+      if (newName && newDate) {
+        const res = await fetch(`http://localhost:8000/api/workouts/${workout.id}/`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({ name: newName, date: newDate })
+        });
+
+        if (res.ok) {
+          alert("Treino atualizado!");
+          getWorkouts();
+        } else {
+          alert("Erro ao atualizar treino.");
         }
-    </script>
+      }
+    }
+
+    async function deleteWorkout(id) {
+  if (confirm("Deseja excluir este treino?")) {
+    const res = await fetch(`http://localhost:8000/api/workouts/${id}/`, {
+      method: "DELETE",
+      headers: { "Authorization": "Bearer " + token }
+    });
+
+    if (res.ok) {
+      alert("Treino excluído!");
+      getWorkouts();
+    } else {
+      alert("Erro ao excluir treino.");
+    }
+  }
+}
+
+    async function getJsonWorkouts() {
+      const res = await fetch("http://localhost:8000/api/json/workouts/");
+      const data = await res.json();
+
+      const list = document.getElementById("json-workout-list");
+      list.innerHTML = "";
+
+      data.forEach(workout => {
+        const li = document.createElement("li");
+        li.classList.add("mb-2");
+
+        const text = document.createElement("span");
+        text.textContent = `${workout.date} — ${workout.name}`;
+        li.appendChild(text);
+
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "Editar";
+        editBtn.className = "ml-2 px-2 py-1 bg-blue-400 text-white rounded";
+        editBtn.onclick = () => editJsonWorkout(workout);
+        li.appendChild(editBtn);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "Excluir";
+        deleteBtn.className = "ml-2 px-2 py-1 bg-red-500 text-white rounded";
+        deleteBtn.onclick = () => deleteJsonWorkout(workout.id);
+        li.appendChild(deleteBtn);
+
+        list.appendChild(li);
+      });
+    }
+
+    async function editJsonWorkout(workout) {
+      const newName = prompt("Novo nome do treino:", workout.name);
+      const newDate = prompt("Nova data (AAAA-MM-DD):", workout.date);
+
+      if (newName && newDate) {
+        const res = await fetch(`http://localhost:8000/api/json/workouts/${workout.id}/`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: newName, date: newDate, exercises: workout.exercises })
+        });
+
+        if (res.ok) {
+          alert("Treino atualizado!");
+          getJsonWorkouts();
+        } else {
+          alert("Erro ao atualizar treino.");
+        }
+      }
+    }
+
+    async function deleteJsonWorkout(id) {
+      if (confirm("Deseja excluir este treino?")) {
+        const res = await fetch(`http://localhost:8000/api/json/workouts/${id}/`, {
+          method: "DELETE"
+        });
+
+        if (res.ok) {
+          alert("Treino excluído!");
+          getJsonWorkouts();
+        } else {
+          alert("Erro ao excluir treino.");
+        }
+      }
+    }
+
+    async function createJsonWorkout() {
+      const name = document.getElementById("new-json-workout-name").value.trim();
+      const date = document.getElementById("new-json-workout-date").value;
+
+      if (!name || !date) {
+        return alert("Preencha todos os campos para criar treino JSON.");
+      }
+
+      const newWorkout = {
+        name,
+        date,
+        exercises: []  // pode adicionar um campo de exercícios depois se quiser
+      };
+
+      const res = await fetch("http://localhost:8000/api/json/workouts/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newWorkout)
+      });
+
+      if (res.ok) {
+        alert("Treino JSON criado com sucesso!");
+        getJsonWorkouts();
+      } else {
+        alert("Erro ao criar treino JSON.");
+      }
+    }
+
+
+    updateAuthDisplay();
+  </script>
 </body>
 </html>

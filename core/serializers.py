@@ -7,14 +7,11 @@ class ExerciseSerializer(serializers.ModelSerializer):
         model = Exercise
         fields = '__all__'
 
-
 class WorkoutSerializer(serializers.ModelSerializer):
-    exercises = ExerciseSerializer(many=True, read_only=True)
-
     class Meta:
         model = Workout
-        fields = '__all__'
-
+        fields = ['id', 'name', 'date', 'user']  # OK
+        read_only_fields = ['id', 'user']        # ESSENCIAL
 
 class FoodItemSerializer(serializers.ModelSerializer):
     class Meta:
